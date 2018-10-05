@@ -151,7 +151,7 @@
                                         <color key="backgroundColor" red="0.43529411759999997" green="0.4431372549" blue="0.47450980390000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <state key="normal" image="date_selected"/>
                                         <connections>
-                                            <action selector="slotBtn:" destination="BYZ-38-t0r" eventType="touchUpInside" id="I5o-mH-gLu"/>
+                                            <action selector="redBtnPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="I5o-mH-gLu"/>
                                         </connections>
                                     </button>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="&lt;-- Tap Here" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vRe-70-k7x">
@@ -211,7 +211,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="billAmount" destination="hJi-ZU-C49" id="PgF-GC-P65"/>
+                        <outlet property="billAmountField" destination="hJi-ZU-C49" id="PgF-GC-P65"/>
                         <outlet property="borderImg" destination="ELX-3e-9UX" id="H8o-RP-bB0"/>
                         <outlet property="redBtn" destination="N2z-5F-GQc" id="FOv-kL-6HB"/>
                         <outlet property="slotImg" destination="Wxf-cE-vYY" id="bDg-6V-KRL"/>

@@ -9,6 +9,8 @@
 import UIKit
 
 extension UIButton{
+    
+    // Makes the UIButton wiggle for a short time via animation
     func wiggle(){
         let wiggleAnim = CABasicAnimation(keyPath: "position")
         wiggleAnim.duration = 0.05
@@ -20,6 +22,7 @@ extension UIButton{
         layer.add(wiggleAnim, forKey: "position")
     }
     
+    // makes the button dim for a short time via animation
     func dim(){
         UIView.animate(withDuration: 0.15, animations: {
             self.alpha = 0.75
@@ -30,6 +33,7 @@ extension UIButton{
         }
     }
     
+    // cause the buttons background to change colors when called.
     func colorize(){
         let randomNumberArray = generateRandomNumbers(quantity: 3)
         let randomColor = UIColor(red: randomNumberArray[0]/255, green: randomNumberArray[1]/255, blue: randomNumberArray[2]/255, alpha: 1.0)
@@ -38,13 +42,17 @@ extension UIButton{
         }
     }
     
+    // Generates a random array of CGFloat numbers.
+    // paramter (quantity): The number of elements to be add to the CGFloat array.
     func generateRandomNumbers(quantity: Int) -> [CGFloat]{
+        
         var randomNumberArray = [CGFloat]()
         
         for _ in 1...quantity{
             let randomNumber = CGFloat(arc4random_uniform(255))
             randomNumberArray.append(randomNumber)
         }
+        
         return randomNumberArray
     }
 }

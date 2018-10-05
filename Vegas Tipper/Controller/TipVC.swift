@@ -14,22 +14,36 @@ class TipVC: UIViewController{
     @IBOutlet weak var slotImg: UIImageView!
     @IBOutlet weak var tipAmount: UILabel!
     @IBOutlet weak var borderImg: UIImageView!
-    @IBOutlet weak var billAmount: UITextField!
+    @IBOutlet weak var billAmountField: UITextField!
     @IBOutlet weak var totalAmount: UILabel!
     @IBOutlet weak var redBtn: UIButton!
     
+    
+    // ===============================================================
+    //         _              ______ _     _ _                     _
+    //        (_)             |  _  (_)   | | |                   | |
+    //  __   ___  _____      _| | | |_  __| | |     ___   __ _  __| |
+    //  \ \ / / |/ _ \ \ /\ / / | | | |/ _` | |    / _ \ / _` |/ _` |
+    //   \ V /| |  __/\ V  V /| |/ /| | (_| | |___| (_) | (_| | (_| |
+    //    \_/ |_|\___| \_/\_/ |___/ |_|\__,_\_____/\___/ \__,_|\__,_|
+    //
+    // ===============================================================
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpView()
     }
     
-    func reloadView(){
-        let bill: Double = Double(billAmount.text!) ?? 0.0
-        tipAmount.text = String(format: "$%.2f", bill * selectedTipAmount())
-        totalAmount.text = String(format: "$%.2f", bill + (bill * selectedTipAmount()))
-        setDefaults()
-    }
     
+    // ==========================================================================
+    //     ____ _                 _____                 _   _
+    //    / ___| | __ _ ___ ___  |  ___|   _ _ __   ___| |_(_) ___  _ __  ___
+    //   | |   | |/ _` / __/ __| | |_ | | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+    //   | |___| | (_| \__ \__ \ |  _|| |_| | | | | (__| |_| | (_) | | | \__ \
+    //    \____|_|\__,_|___/___/ |_|   \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+    //
+    // =========================================================================
+    
+    // This function sets up the the UIView and checks for if the app has been idle for 10 minutes.
     func setUpView(){
         
         tipPercentPicker.delegate = self
@@ -38,12 +52,12 @@ class TipVC: UIViewController{
         slotImg.layer.borderWidth = 5.0
         borderImg.layer.borderColor = #colorLiteral(red: 0.4352941176, green: 0.4431372549, blue: 0.4745098039, alpha: 1)
         borderImg.layer.borderWidth = 51.5
-        billAmount.becomeFirstResponder()
+        billAmountField.becomeFirstResponder()
         
-        
-         print(defaults.bool(forKey: "past10Min"))
-        
+        // If the app has been open outside of 10 minutes then the default tip that was set in the settings.
+        // Else the data that was set in the app at closing are reloaded and shown to the user.
         if defaults.bool(forKey: "past10Min"){
+            billAmountField.text = ""
             var defaultTip = defaults.integer(forKey: "defaultTip")
             for component in (0...2).reversed(){
                 tipPercentPicker.selectRow(PICKER_DATA_SIZE/2 + (defaultTip % 10) , inComponent: component, animated: false)
@@ -52,30 +66,59 @@ class TipVC: UIViewController{
         } else{
             loadDefaults()
         }
-       
     }
     
+    // Reloads the view. This function is called when data is changed.
+    func reloadView(){
+        let bill: Double = Double(billAmountField.text!) ?? 0.0
+        tipAmount.text = String(format: "$%.2f", bill * selectedTipAmount())
+        totalAmount.text = String(format: "$%.2f", bill + (bill * selectedTipAmount()))
+        setDefaults()
+    }
+
+    // This function takes the digits from the UIPicker and returns a Double in the form of a percentage decimal.
+    func selectedTipAmount() -> Double{
+        let stringNumber = "\(tipPercentPicker.selectedRow(inComponent: 0) % 10)\(tipPercentPicker.selectedRow(inComponent: 1) % 10)\(tipPercentPicker.selectedRow(inComponent: 2) % 10)"
+        return Double(stringNumber)! / 100
+    }
+    
+    // This function sets the defaults for persistent data.
     func setDefaults(){
-        defaults.set(billAmount.text, forKey: "billAmountTxt")
+        defaults.set(billAmountField.text, forKey: "billAmountTxt")
         defaults.set(tipPercentPicker.selectedRow(inComponent: 0), forKey: "component0")
         defaults.set(tipPercentPicker.selectedRow(inComponent: 1), forKey: "component1")
         defaults.set(tipPercentPicker.selectedRow(inComponent: 2), forKey: "component2")
         defaults.synchronize()
     }
     
+    // This function loads the persistent data into the UI elements
     func loadDefaults(){
-        billAmount.text = defaults.string(forKey: "billAmountTxt")
+        billAmountField.text = defaults.string(forKey: "billAmountTxt")
         tipPercentPicker.selectRow(PICKER_DATA_SIZE/2 + defaults.integer(forKey: "component0") % 10, inComponent: 0, animated: false)
         tipPercentPicker.selectRow(PICKER_DATA_SIZE/2 + defaults.integer(forKey: "component1") % 10, inComponent: 1, animated: false)
         tipPercentPicker.selectRow(PICKER_DATA_SIZE/2 + defaults.integer(forKey: "component2") % 10, inComponent: 2, animated: false)
         reloadView()
     }
     
+    
+    // ========================================================================================================================================
+    //                 _   _               ______                _   _
+    //       /\       | | (_)             |  ____|              | | (_)
+    //      /  \   ___| |_ _  ___  _ __   | |__ _   _ _ __   ___| |_ _  ___  _ __  ___
+    //     / /\ \ / __| __| |/ _ \| '_ \  |  __| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+    //    / ____ \ (__| |_| | (_) | | | | | |  | |_| | | | | (__| |_| | (_) | | | \__ \
+    //   /_/    \_\___|\__|_|\___/|_| |_| |_|   \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+    //
+    //
+    // ========================================================================================================================================
+    
+    // This function is called every time the text is entered into the billAmountField outlet.
     @IBAction func calulateTip(_ sender: Any) {
         reloadView()
     }
     
-    @IBAction func slotBtn(_ sender: Any) {
+    // When the red button is pressed this function is called and will randomly choose an percentage.
+    @IBAction func redBtnPressed(_ sender: Any) {
         
         redBtn.wiggle()
         redBtn.dim()
@@ -95,19 +138,25 @@ class TipVC: UIViewController{
         reloadView()
     }
     
-    func selectedTipAmount() -> Double{
-        let stringNumber = "\(tipPercentPicker.selectedRow(inComponent: 0) % 10)\(tipPercentPicker.selectedRow(inComponent: 1) % 10)\(tipPercentPicker.selectedRow(inComponent: 2) % 10)"
-        return Double(stringNumber)! / 100
-    }
+
 
     
 }
 
+
+// ========================================================================================================================================
+//  ______ _      _               _   _ _                ______                _   _
+//  | ___ (_)    | |             | | | (_)               |  ___|              | | (_)
+//  | |_/ /_  ___| | _____ _ __  | | | |_  _____      __ | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+//  |  __/| |/ __| |/ / _ \ '__| | | | | |/ _ \ \ /\ / / |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+//  | |   | | (__|   <  __/ |    \ \_/ / |  __/\ V  V /  | | | |_| | | | | (__| |_| | (_) | | | \__ \
+//  \_|   |_|\___|_|\_\___|_|     \___/|_|\___| \_/\_/   \_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+//
+// The Docs for the following functions can be seen in the quick help inspector
+// ========================================================================================================================================
+
 extension TipVC: UIPickerViewDelegate, UIPickerViewDataSource {
     
-    // ========================================================================================================================================
-    // Picker View Functions
-    // ========================================================================================================================================
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 3
     }
